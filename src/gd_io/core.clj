@@ -7,7 +7,8 @@
                                                          GoogleTokenResponse GoogleClientSecrets)
            (com.google.api.client.googleapis.javanet GoogleNetHttpTransport)
            (com.google.api.client.json.jackson2 JacksonFactory)
-           (com.google.api.services.drive Drive Drive$Builder))
+           (com.google.api.services.drive Drive Drive$Builder)
+           (com.google.api.services.drive.model File))
 
   (:require [gd-io.config :refer [load-config]]))
 
@@ -50,7 +51,9 @@
     (Drive$Builder. http-transport json-factory)
     (.build)))
 
-(defn get-files []
+(defn get-files
+  "Put some good docs here..."
+  []
   (->
     (mk-drive-service (load-config))
     (.files)
@@ -59,9 +62,15 @@
     (.execute)
     (.getItems)))
 
+(defn mk-parent-info [parents]
+  (map #(hash-map
+         :id (.getId %)
+         :is-root (.getIsRoot %)) parents))
+
 (defn ls-dirs []
   (map
     #(hash-map
       :title (.getTitle %)
-      :id (.getId %))
+      :id (.getId %)
+      :parents (vec (mk-parent-info (.getParents %))))
     (get-files)))
