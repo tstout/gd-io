@@ -35,5 +35,4 @@
                                  :description   "This is a test"
                                  :media-type    "application/octet-stream"
                                  :parent-folder "0ABqBLjW50GqhUk9PVA"})
-   :media-type    "application/octet-stream"
    :file          (file "target/gd-io-0.1.0-SNAPSHOT-standalone.jar")})

@@ -79,15 +79,13 @@
 
 (defn ^File insert-file [{:keys [drive-service
                                  file-meta
-                                 media-type
                                  file] :as m-arg}]
   {:pre [(has-keys? m-arg [:drive-service
                            :file-meta
-                           :media-type
                            :file])]}
     (->
       drive-service
       (.files)
-      (.insert file-meta (FileContent. media-type file))
+      (.insert file-meta (FileContent. (.getMimeType file-meta) file))
       (.execute)))
 
