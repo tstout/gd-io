@@ -12,4 +12,7 @@
                  [com.google.http-client/google-http-client-jackson2 "1.20.0"]
                  [com.google.apis/google-api-services-drive "v2-rev168-1.20.0"]
                  [com.google.gdata/core "1.47.1"]
-                 [org.clojure/data.json "0.2.6"]])
+                 [org.clojure/data.json "0.2.6"]]
+  :profiles {:dev {:source-paths ["dev"]
+                   :dependencies [[org.clojure/tools.namespace "0.2.4"]]}}
+  :repl-options {:init-ns user})
