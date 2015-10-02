@@ -77,15 +77,29 @@
                            (ParentReference.)
                            (.setId parent-folder))))))
 
-(defn ^File insert-file [{:keys [drive-service
-                                 file-meta
-                                 file] :as m-arg}]
+(defn insert-file
+  "Upload a file given a map of the requisite stuff.
+  The ID of the new file is returned"
+  [{:keys [drive-service
+           file-meta
+           file] :as m-arg}]
   {:pre [(has-keys? m-arg [:drive-service
                            :file-meta
                            :file])]}
-    (->
-      drive-service
-      (.files)
-      (.insert file-meta (FileContent. (.getMimeType file-meta) file))
-      (.execute)))
+  (->
+    drive-service
+    (.files)
+    (.insert file-meta (FileContent. (.getMimeType file-meta) file))
+    (.execute)
+    (.getId)))
 
+(defn trash-file
+  "Move a file to the trash.
+  The ID of the trashed file is returned"
+  [drive-serice file-id]
+  (->
+    drive-serice
+    (.files)
+    (.trash file-id)
+    (.execute)
+    (.getId)))

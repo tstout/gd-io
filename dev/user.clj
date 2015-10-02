@@ -3,7 +3,8 @@
     [clojure.java.shell :refer [sh]]
     [gd-io.interop :refer [mk-drive-service
                            mk-file-meta
-                           insert-file]]
+                           insert-file
+                           trash-file]]
     [gd-io.config :refer [load-config]]
     [clojure.string :as str]
     [gd-io.core :refer [ls-dirs
