@@ -18,12 +18,15 @@
     (filter #(= (:id %) id) files)))
 
 (defn file-title [id files]
-  (:title (file-by-id id files)))
+  (vector (:title (file-by-id id files)) id))
 
 (defn dir-title [id files]
   (if-let [title (file-title id files)]
-    title
-    "/"))
+    (vector title id)
+    (vector "/" id)))
+
+;(defn root-dir-id [dirs]
+;  (filter #(= nil (file-title) dirs)
 
 (defn dir-titles [id-vec files]
   (map #(dir-title % files) id-vec))
@@ -34,6 +37,7 @@
 (defn file-titles [files]
   (map #(file-title (:id %) files) files))
 
+;; TODO move to interop
 (defn get-file-by-id [drive-service id]
   (->
     drive-service
@@ -41,6 +45,7 @@
     (.get id)
     (.execute)))
 
+;; TODO move to interop
 (defn get-files
   "get files matching a gdrive query"
   [drive-service query]
@@ -80,6 +85,10 @@
     ;;
     ))
 
+(defn in?
+  "true if the sequence contains the element"
+  [seq elm]
+  (some #(= elm %) seq))
 
 (defn normalize-dir-tree [dtree dirs]
   (for [[root-dirs child-dirs] dtree]
@@ -92,6 +101,39 @@
       :id (.getId %)
       :parents (vec (mk-parent-info (.getParents %))))
     (get-folders drive-service)))
+
+(defn child-dirs [dirs parent-id]
+  (filter #(in? (:parents %) parent-id) dirs))
+
+(defn dir-by-title [dirs title index]
+  (if-let [existing-dir (first (filter #(= (:title %) title) dirs))]
+    (assoc existing-dir :index index)
+    {:title   title
+     :id      nil
+     :index   index}))
+
+(defn path-parent-id
+  "Extract the id of the parent path corresponding to the
+  path-node"
+  [path-node path-vec]
+  {:pre [(> (:index path-node) 0)]}
+  (->>
+    (dec (:index path-node))
+    (nth path-vec)
+    :id))
+
+(defn mk-path [dirs path]
+  (let [parts (filter
+                #(not (str/blank? %))
+                (str/split path #"/"))]
+    (vec (map-indexed
+           (fn [index itm] (dir-by-title dirs itm index)) parts))))
+
+(defn dir-exists? [dirs path]
+  (not-any?
+    #(nil? %)
+    (mk-path dirs path)))
+
 
 (defn mk-dir [drive dir-name]
   (prn "mkdir---?"))

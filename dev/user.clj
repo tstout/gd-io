@@ -4,7 +4,10 @@
     [gd-io.interop :refer [mk-drive-service
                            mk-file-meta
                            insert-file
-                           trash-file]]
+                           trash-file
+                           about
+                           about-summary
+                           root-folder]]
     [gd-io.config :refer [load-config]]
     [clojure.string :as str]
     [gd-io.core :refer [ls-dirs
@@ -17,7 +20,14 @@
                         normalize-dir-tree
                         dir-titles
                         get-file-by-id
-                        path-vec]]
+                        path-vec
+                        in?
+                        child-dirs
+                        file-titles
+                        mk-path
+                        dir-by-title
+                        dir-exists?
+                        path-parent-id]]
     [clojure.java.io :refer [as-file
                              file
                              make-parents]]))

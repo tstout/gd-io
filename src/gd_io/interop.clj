@@ -103,3 +103,24 @@
     (.trash file-id)
     (.execute)
     (.getId)))
+
+(defn about [drive-service]
+  (->
+    drive-service
+    (.about)
+    (.get)
+    (.execute)
+    (bean)))
+
+(defn about-summary [drive-service]
+  (let [{:keys [rootFolderId
+                quotaBytesUsed
+                quotaBytesTotal]} (about drive-service)]
+    {:root-folder rootFolderId
+     :quota-bytes-used quotaBytesUsed
+     :quota-bytes-total quotaBytesTotal
+     :quota-bytes-remaining (- quotaBytesTotal quotaBytesUsed)}))
+
+(defn root-folder [drive-service]
+  (:root-folder (about-summary drive-service)))
+

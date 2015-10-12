@@ -26,12 +26,11 @@
       (make-parents (cfg-file))
       (spit (cfg-file) stub-config))))
 
-(defn load-config
-  ([]
+(defn load-config []
    (mk-config)
    (->
      (cfg-file)
      slurp
-     edn/read-string)))
+     edn/read-string))
 
 
