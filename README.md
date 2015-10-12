@@ -4,7 +4,7 @@ A Clojure library providing primitive access to Google Drive.
 
 ## Usage
 Look at https://github.com/SparkFund/google-apps-clj/blob/master/README.md for instructions on how to obtain credentials
-for your google drive account using the REPL.
+for your google drive account using the REPL. This is very raw at the moment and incomplete.
 
 
 ## License
