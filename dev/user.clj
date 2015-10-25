@@ -1,5 +1,6 @@
 (ns user
   (:require
+    [clojure.inspector :refer [inspect inspect-tree inspect-table]]
     [clojure.java.shell :refer [sh]]
     [gd-io.interop :refer [mk-drive-service
                            mk-file-meta
@@ -19,7 +20,6 @@
                         file-title
                         normalize-dir-tree
                         dir-titles
-                        get-file-by-id
                         path-vec
                         in?
                         child-dirs

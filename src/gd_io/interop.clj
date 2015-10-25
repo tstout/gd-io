@@ -13,6 +13,10 @@
   (:require [gd-io.config :refer [load-config]]
             [clojure.set :as set]))
 
+(def ^:private mime-type
+  {:file   "application/vnd.google-apps.file"
+   :folder "application/vnd.google-apps.folder"})
+
 (def ^:private http-transport
   (GoogleNetHttpTransport/newTrustedTransport))
 
@@ -112,15 +116,20 @@
     (.execute)
     (bean)))
 
-(defn about-summary [drive-service]
+(defn about-summary
+  "Google Drive's about endpoint returns a copious amount of info.
+  This merely returns a very useful, and very small subset"
+  [drive-service]
   (let [{:keys [rootFolderId
                 quotaBytesUsed
                 quotaBytesTotal]} (about drive-service)]
-    {:root-folder rootFolderId
-     :quota-bytes-used quotaBytesUsed
-     :quota-bytes-total quotaBytesTotal
+    {:root-folder           rootFolderId
+     :quota-bytes-used      quotaBytesUsed
+     :quota-bytes-total     quotaBytesTotal
      :quota-bytes-remaining (- quotaBytesTotal quotaBytesUsed)}))
 
-(defn root-folder [drive-service]
+(defn root-folder
+  "Convenience fn for extracting the root folder from a drive service instance"
+  [drive-service]
   (:root-folder (about-summary drive-service)))
 

@@ -27,10 +27,10 @@
       (spit (cfg-file) stub-config))))
 
 (defn load-config []
-   (mk-config)
-   (->
-     (cfg-file)
-     slurp
-     edn/read-string))
+  (mk-config)
+  (->
+    (cfg-file)
+    slurp
+    edn/read-string))
 
 

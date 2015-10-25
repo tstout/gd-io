@@ -7,6 +7,7 @@
 
 (defrecord FileId [parent-id name id])
 
+;; TODO - move to interop
 (def ^:private queries
   {:folders "mimeType = 'application/vnd.google-apps.folder' and trashed=false"
    :parents "'%s'in parents"})
@@ -58,6 +59,7 @@
     (.execute)
     (.getItems)))
 
+;; TODO move to interop
 (defn get-folders [drive-service]
   (get-files drive-service (:folders queries)))
 
@@ -90,6 +92,9 @@
   [seq elm]
   (some #(= elm %) seq))
 
+(defn not-blank? [str]
+  (not (str/blank? str)))
+
 (defn normalize-dir-tree [dtree dirs]
   (for [[root-dirs child-dirs] dtree]
     (vector (dir-titles root-dirs dirs) (file-titles child-dirs))))
@@ -108,30 +113,28 @@
 (defn dir-by-title [dirs title index]
   (if-let [existing-dir (first (filter #(= (:title %) title) dirs))]
     (assoc existing-dir :index index)
-    {:title   title
-     :id      nil
-     :index   index}))
+    {:title title
+     :id    nil
+     :index index}))
 
 (defn path-parent-id
   "Extract the id of the parent path corresponding to the
   path-node"
   [path-node path-vec]
-  {:pre [(> (:index path-node) 0)]}
+  {:pre [(map? path-node) (> (:index path-node) 0)]}
   (->>
     (dec (:index path-node))
     (nth path-vec)
     :id))
 
 (defn mk-path [dirs path]
-  (let [parts (filter
-                #(not (str/blank? %))
-                (str/split path #"/"))]
+  (let [parts (filter #(not-blank? %) (str/split path #"/"))]
     (vec (map-indexed
            (fn [index itm] (dir-by-title dirs itm index)) parts))))
 
 (defn dir-exists? [dirs path]
   (not-any?
-    #(nil? %)
+    #(nil? (:id %))
     (mk-path dirs path)))
 
 
