@@ -1,7 +1,9 @@
 (ns gd-io.core
   "Google Drive I/O library"
   (:require [gd-io.config :refer [load-config]]
-            [gd-io.interop :refer [mk-drive-service]]
+            [gd-io.interop :refer [mk-drive-service
+                                   root-folder
+                                   insert-folder]]
             [gd-io.protocols :refer [IDrive]]
             [clojure.string :as str]))
 
@@ -121,11 +123,14 @@
   "Extract the id of the parent path corresponding to the
   path-node"
   [path-node path-vec]
-  {:pre [(map? path-node) (> (:index path-node) 0)]}
-  (->>
-    (dec (:index path-node))
-    (nth path-vec)
-    :id))
+  {:pre [(map? path-node)
+         (> (:index path-node) 0)]}
+  (let [parent-index (dec (:index path-node))]
+    (:id
+      (first
+        (filter
+          #(= parent-index (:index %))
+          path-vec)))))
 
 (defn mk-path [dirs path]
   (let [parts (filter #(not-blank? %) (str/split path #"/"))]
@@ -138,8 +143,34 @@
     (mk-path dirs path)))
 
 
-(defn mk-dir [drive dir-name]
-  (prn "mkdir---?"))
+(defn folder-meta [name parent-id]
+  )
+
+(defn mk-folder [drive-service name parent-id]
+  (insert-folder
+    drive-service
+    {:title         name
+     :description   ""
+     :media-type    "application/vnd.google-apps.folder"
+     :parent-folder parent-id}))
+
+(defn mk-dir
+  "Create the specified directory along with any parent directories
+  if they do not currently exist. If the directory already exists, this
+  is not considered an error. The GDrive id of the path is returned.
+  The path argument is a typical unix-style path"
+  [drive path]
+  (let [root (root-folder drive)
+        dirs (ls-dirs drive)
+        nodes (mk-path dirs path)]
+    ;; TODO - need to handle root folder creation
+    (reduce
+      (fn [parent current]
+        (if (nil? (:id current))
+          {:id (mk-folder drive (:title current) (:id parent))}
+          current))
+      (sort-by :index nodes))))
+
 
 (defn ls-dir [drive-service filter]
   (ls-dirs drive-service))
@@ -149,7 +180,8 @@
 (defrecord GDrive [drive-service]
   IDrive
   (mkdir [drive dir-name]
-    (mk-dir drive-service dir-name))
+    ;;(mk-dir drive-service dir-name))
+    )
 
   (ls [drive filter]
     (ls-dir drive-service filter))

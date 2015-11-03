@@ -8,7 +8,8 @@
                            trash-file
                            about
                            about-summary
-                           root-folder]]
+                           root-folder
+                           insert-folder]]
     [gd-io.config :refer [load-config]]
     [clojure.string :as str]
     [gd-io.core :refer [ls-dirs
@@ -25,6 +26,8 @@
                         child-dirs
                         file-titles
                         mk-path
+                        mk-dir
+                        mk-dir2
                         dir-by-title
                         dir-exists?
                         path-parent-id]]

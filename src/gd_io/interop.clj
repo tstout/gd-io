@@ -97,6 +97,17 @@
     (.execute)
     (.getId)))
 
+
+(defn insert-folder
+  "Create a GDrive Folder"
+  [drive-service file-meta]
+  (->
+    drive-service
+    (.files)
+    (.insert (mk-file-meta file-meta))
+    (.execute)
+    (.getId)))
+
 (defn trash-file
   "Move a file to the trash.
   The ID of the trashed file is returned"
@@ -118,7 +129,7 @@
 
 (defn about-summary
   "Google Drive's about endpoint returns a copious amount of info.
-  This merely returns a very useful, and very small subset"
+  This merely returns a very small, but useful subset"
   [drive-service]
   (let [{:keys [rootFolderId
                 quotaBytesUsed
