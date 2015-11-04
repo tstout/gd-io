@@ -154,21 +154,27 @@
      :media-type    "application/vnd.google-apps.folder"
      :parent-folder parent-id}))
 
+(defn mk-folder-at-root [title]
+  )
+
 (defn mk-dir
   "Create the specified directory along with any parent directories
   if they do not currently exist. If the directory already exists, this
   is not considered an error. The GDrive id of the path is returned.
   The path argument is a typical unix-style path"
   [drive path]
-  (let [root (root-folder drive)
-        dirs (ls-dirs drive)
+  (let [dirs (ls-dirs drive)
         nodes (mk-path dirs path)]
     ;; TODO - need to handle root folder creation
     (reduce
       (fn [parent current]
-        (if (nil? (:id current))
+        (cond
+          (nil? (:id parent))
+          (let [parent-id (mk-folder drive (:title parent) (root-folder drive))]
+            {:id (mk-folder drive (:title current) parent-id)})
+          (nil? (:id current))
           {:id (mk-folder drive (:title current) (:id parent))}
-          current))
+          :else current))
       (sort-by :index nodes))))
 
 

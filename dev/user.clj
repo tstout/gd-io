@@ -27,7 +27,6 @@
                         file-titles
                         mk-path
                         mk-dir
-                        mk-dir2
                         dir-by-title
                         dir-exists?
                         path-parent-id]]
