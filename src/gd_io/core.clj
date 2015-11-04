@@ -71,23 +71,11 @@
   ;; roots to "/" explicitly.
   (set (map #(:parents %) dirs)))
 
-;(defn dir-tree [dirs]
-;  (let [parents (unique-parents dirs)]
-;    (map #() )
-
 (defn path-vec [path]
   (vec (str/split path #"/")))
 
 (defn dir-tree [dirs]
   (group-by :parents dirs))
-
-(defn dir-exists [path dirs]
-  (let [dtree (dir-tree dirs)
-        path-vec (str/split path #"/")]
-    ;;
-    ;; use zipmap here to match?
-    ;;
-    ))
 
 (defn in?
   "true if the sequence contains the element"
@@ -142,10 +130,6 @@
     #(nil? (:id %))
     (mk-path dirs path)))
 
-
-(defn folder-meta [name parent-id]
-  )
-
 (defn mk-folder [drive-service name parent-id]
   (insert-folder
     drive-service
@@ -167,63 +151,72 @@
         (fn [parent current]
           (cond
             (nil? (:id parent))
+            ;;
+            ;; Parent did not exist, need to create it, along with current
+            ;;
             (let [parent-id (mk-folder drive (:title parent) (root-folder drive))]
               {:id (mk-folder drive (:title current) parent-id)})
             (nil? (:id current))
+            ;;
+            ;; Parent already exists, simply create current
+            ;;
             {:id (mk-folder drive (:title current) (:id parent))}
+            ;;
+            ;; Both parent and current exist, simply return current
+            ;;
             :else current))
         (sort-by :index nodes)))))
 
 
-  (defn ls-dir [drive-service filter]
-    (ls-dirs drive-service))
+(defn ls-dir [drive-service filter]
+  (ls-dirs drive-service))
 
-  (defn cp-file [drive src-file dest-file])
+(defn cp-file [drive src-file dest-file])
 
-  (defrecord GDrive [drive-service]
-    IDrive
-    (mkdir [drive dir-name]
-      ;;(mk-dir drive-service dir-name))
-      )
-
-    (ls [drive filter]
-      (ls-dir drive-service filter))
-
-    (cp [drive src-file dest-file]
-      (cp-file drive-service src-file dest-file))
-
-    (rm [drive file]
-      (prn "rm---")))
-
-  (defn mk-gdrive [app-name]
-    (->GDrive
-      (mk-drive-service (load-config) app-name)))
-
-
-  ;;
-  ;; I considerd using a let-over-lambda style
-  ;; instead of defrecord/defprotocol
-  ;;;
-  ;(defn create-gdrive []
-  ;  (let [drive (mk-drive-service (load-config))
-  ;        operations {:mkdir (fn [dir-name] (mk-dir drive dir-name))
-  ;                    :ls    (fn [_] (ls-dirs drive))
-  ;                    :cp    (fn [src-file dest-file] (cp drive src-file dest-file))
-  ;                    :rm    (fn [file] (rm drive file))}]
-  ;    (fn [operation & params]
-  ;      (->
-  ;        (operation operations)
-  ;        (apply params)))))
-
-
-  ;(defn mk-dir [remote-parent-id]
-  ;  )
-
-  (defn rm-dir [remote-dir-id]
+(defrecord GDrive [drive-service]
+  IDrive
+  (mkdir [drive dir-name]
+    ;;(mk-dir drive-service dir-name))
     )
 
-  ;(defn upload-file [{:keys [local-file remote-dir-id remote-name]}]
-  ;  )
+  (ls [drive filter]
+    (ls-dir drive-service filter))
 
-  (defn download-file []
-    )
+  (cp [drive src-file dest-file]
+    (cp-file drive-service src-file dest-file))
+
+  (rm [drive file]
+    (prn "rm---")))
+
+(defn mk-gdrive [app-name]
+  (->GDrive
+    (mk-drive-service (load-config) app-name)))
+
+
+;;
+;; I considerd using a let-over-lambda style
+;; instead of defrecord/defprotocol
+;;;
+;(defn create-gdrive []
+;  (let [drive (mk-drive-service (load-config))
+;        operations {:mkdir (fn [dir-name] (mk-dir drive dir-name))
+;                    :ls    (fn [_] (ls-dirs drive))
+;                    :cp    (fn [src-file dest-file] (cp drive src-file dest-file))
+;                    :rm    (fn [file] (rm drive file))}]
+;    (fn [operation & params]
+;      (->
+;        (operation operations)
+;        (apply params)))))
+
+
+;(defn mk-dir [remote-parent-id]
+;  )
+
+(defn rm-dir [remote-dir-id]
+  )
+
+;(defn upload-file [{:keys [local-file remote-dir-id remote-name]}]
+;  )
+
+(defn download-file []
+  )

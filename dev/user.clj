@@ -28,8 +28,7 @@
                         mk-path
                         mk-dir
                         dir-by-title
-                        dir-exists?
-                        path-parent-id]]
+                        dir-exists?]]
     [clojure.java.io :refer [as-file
                              file
                              make-parents]]))
