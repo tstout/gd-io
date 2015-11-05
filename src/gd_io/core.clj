@@ -144,9 +144,13 @@
   is not considered an error. The GDrive id of the path is returned.
   The path argument is a typical unix-style path"
   [drive path]
-  (let [nodes (mk-path (ls-dirs drive) path)]
+  (let [root-folder (root-folder drive)
+        dirs (ls-dirs drive)
+        nodes (mk-path dirs path)]
     (if (= 1 (count nodes))
-      {:id (mk-folder drive (:title (first nodes)) (root-folder drive))}
+      (if-not (dir-exists? dirs path)
+        {:id (mk-folder drive (:title (first nodes)) root-folder)}
+        (first nodes))
       (reduce
         (fn [parent current]
           (cond
@@ -154,7 +158,7 @@
             ;;
             ;; Parent did not exist, need to create it, along with current
             ;;
-            (let [parent-id (mk-folder drive (:title parent) (root-folder drive))]
+            (let [parent-id (mk-folder drive (:title parent) root-folder)]
               {:id (mk-folder drive (:title current) parent-id)})
             (nil? (:id current))
             ;;
