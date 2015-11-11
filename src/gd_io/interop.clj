@@ -1,4 +1,5 @@
 (ns gd-io.interop
+  "Convenience wrappers for Google Drive java api"
   (:import
     (com.google.api.client.googleapis.auth.oauth2 GoogleClientSecrets$Details
                                                   GoogleCredential
@@ -13,9 +14,13 @@
   (:require [gd-io.config :refer [load-config]]
             [clojure.set :as set]))
 
-(def ^:private mime-type
-  {:file   "application/vnd.google-apps.file"
-   :folder "application/vnd.google-apps.folder"})
+(def ^:private queries
+  {:folders "mimeType = 'application/vnd.google-apps.folder' and trashed=false"
+   :parents "'%s'in parents"})
+
+;(def ^:private mime-type
+;  {:file   "application/vnd.google-apps.file"
+;   :folder "application/vnd.google-apps.folder"})
 
 (def ^:private http-transport
   (GoogleNetHttpTransport/newTrustedTransport))
@@ -84,25 +89,33 @@
 (defn insert-file
   "Upload a file given a map of the requisite stuff.
   The ID of the new file is returned"
-  [{:keys [drive-service
+  [{:keys [drive
            file-meta
            file] :as m-arg}]
-  {:pre [(has-keys? m-arg [:drive-service
+  {:pre [(has-keys? m-arg [:drive
                            :file-meta
                            :file])]}
   (->
-    drive-service
+    drive
     (.files)
     (.insert file-meta (FileContent. (.getMimeType file-meta) file))
     (.execute)
     (.getId)))
 
+(defn download-file
+  "Download a file given the files GDrive id"
+  [drive file-id ostream]
+  (->
+    drive
+    (.files)
+    (.get file-id)
+    (.executeMediaAndDownloadTo ostream)))
 
 (defn insert-folder
   "Create a GDrive Folder"
-  [drive-service file-meta]
+  [drive file-meta]
   (->
-    drive-service
+    drive
     (.files)
     (.insert (mk-file-meta file-meta))
     (.execute)
@@ -130,10 +143,10 @@
 (defn about-summary
   "Google Drive's about endpoint returns a copious amount of info.
   This merely returns a very small, but useful subset"
-  [drive-service]
+  [drive]
   (let [{:keys [rootFolderId
                 quotaBytesUsed
-                quotaBytesTotal]} (about drive-service)]
+                quotaBytesTotal]} (about drive)]
     {:root-folder           rootFolderId
      :quota-bytes-used      quotaBytesUsed
      :quota-bytes-total     quotaBytesTotal
@@ -144,3 +157,16 @@
   [drive-service]
   (:root-folder (about-summary drive-service)))
 
+(defn get-files
+  "get files matching a gdrive query"
+  [drive query]
+  (->
+    drive
+    (.files)
+    (.list)
+    (.setQ query)
+    (.execute)
+    (.getItems)))
+
+(defn get-folders [drive]
+  (get-files drive (:folders queries)))

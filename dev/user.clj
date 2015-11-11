@@ -6,17 +6,18 @@
                            mk-file-meta
                            insert-file
                            trash-file
+                           get-files
+                           get-folders
                            about
                            about-summary
                            root-folder
-                           insert-folder]]
-    [gd-io.config :refer [load-config]]
+                           insert-folder
+                           download-file]]
+    [gd-io.config :refer [load-config default-cfg-file]]
     [clojure.string :as str]
     [gd-io.core :refer [ls-dirs
                         dir-tree
-                        get-files
                         unique-parents
-                        get-folders
                         file-by-id
                         file-title
                         normalize-dir-tree
@@ -42,9 +43,9 @@
 (def ntree (normalize-dir-tree dtree dirs))
 
 (def test-file
-  {:drive-service driveservice
-   :file-meta     (mk-file-meta {:title         "bkup-test-file2"
-                                 :description   "This is a test"
-                                 :media-type    "application/octet-stream"
-                                 :parent-folder "0ABqBLjW50GqhUk9PVA"})
-   :file          (file "target/gd-io-0.1.0-SNAPSHOT-standalone.jar")})
+  {:drive     driveservice
+   :file-meta (mk-file-meta {:title         "bkup-test-file2"
+                             :description   "This is a test"
+                             :media-type    "application/octet-stream"
+                             :parent-folder "0ABqBLjW50GqhUk9PVA"})
+   :file      (file "target/gd-io-0.1.0-SNAPSHOT-standalone.jar")})

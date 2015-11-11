@@ -3,15 +3,14 @@
             [clojure.edn :as edn]))
 
 (defn cfg-file
-  ([]
-   (cfg-file ".gd-io" "gd-io-creds.clj"))
-
   ([dirname fname]
    (->
      (System/getProperty "user.home")
      (file dirname fname))))
 
-(def ^:private stub-config
+(def default-cfg-file (cfg-file ".gd-io" "gd-io-creds.clj"))
+
+(def stub-config
   {:client-id     "YOUR CLIENT ID"
    :client-secret "YOUR CLIENT SECRET"
    :redirect-uris ["urn:ietf:wg:oauth:2.0:oob" "http://localhost"]
@@ -20,16 +19,18 @@
                    :refresh-token "YOUR REFRESH TOKEN",
                    :token-type    "Bearer"}})
 
+;; TODO - change this to throw an exception indicating
+;; where and what stub file was created...
 (defn mk-config []
-  (when-not (.exists (cfg-file))
+  (when-not (.exists default-cfg-file)
     (do
-      (make-parents (cfg-file))
-      (spit (cfg-file) stub-config))))
+      (make-parents default-cfg-file)
+      (spit default-cfg-file stub-config))))
 
 (defn load-config []
   (mk-config)
   (->
-    (cfg-file)
+    default-cfg-file
     slurp
     edn/read-string))
 

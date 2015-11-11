@@ -3,6 +3,7 @@
   (:require [gd-io.config :refer [load-config]]
             [gd-io.interop :refer [mk-drive-service
                                    root-folder
+                                   get-folders
                                    insert-folder]]
             [gd-io.protocols :refer [IDrive]]
             [clojure.string :as str]))
@@ -10,11 +11,6 @@
 (defrecord FileId [parent-id name id])
 
 ;; TODO - move to interop
-(def ^:private queries
-  {:folders "mimeType = 'application/vnd.google-apps.folder' and trashed=false"
-   :parents "'%s'in parents"})
-
-(defn dir-exists? [])
 
 (defn file-by-id [id files]
   (first
@@ -41,29 +37,15 @@
   (map #(file-title (:id %) files) files))
 
 ;; TODO move to interop
-(defn get-file-by-id [drive-service id]
+(defn get-file-by-id [drive id]
   (->
-    drive-service
+    drive
     (.files)
     (.get id)
     (.execute)))
 
 ;; TODO move to interop
-(defn get-files
-  "get files matching a gdrive query"
-  [drive-service query]
-  []
-  (->
-    drive-service
-    (.files)
-    (.list)
-    (.setQ query)
-    (.execute)
-    (.getItems)))
 
-;; TODO move to interop
-(defn get-folders [drive-service]
-  (get-files drive-service (:folders queries)))
 
 (defn unique-parents [dirs]
   ;; TODO - find file names of these IDs.
@@ -89,13 +71,13 @@
   (for [[root-dirs child-dirs] dtree]
     (vector (dir-titles root-dirs dirs) (file-titles child-dirs))))
 
-(defn ls-dirs [drive-service]
+(defn ls-dirs [drive]
   (map
     #(hash-map
       :title (.getTitle %)
       :id (.getId %)
       :parents (vec (mk-parent-info (.getParents %))))
-    (get-folders drive-service)))
+    (get-folders drive)))
 
 (defn child-dirs [dirs parent-id]
   (filter #(in? (:parents %) parent-id) dirs))
@@ -130,24 +112,31 @@
     #(nil? (:id %))
     (mk-path dirs path)))
 
-(defn mk-folder [drive-service name parent-id]
+(defn mk-folder [drive name parent-id]
   (insert-folder
-    drive-service
+    drive
     {:title         name
      :description   ""
      :media-type    "application/vnd.google-apps.folder"
      :parent-folder parent-id}))
 
+(defn only-one? [coll]
+  (= 1 (count coll)))
+
+;;
+;; Note: It seems a more elegant implementation could be achieved here.
+;;
 (defn mk-dir
   "Create the specified directory along with any parent directories
   if they do not currently exist. If the directory already exists, this
   is not considered an error. The GDrive id of the path is returned.
-  The path argument is a typical unix-style path"
+  The path argument is a typical unix-style path. For example,
+  /family-pictures/2015"
   [drive path]
   (let [root-folder (root-folder drive)
         dirs (ls-dirs drive)
         nodes (mk-path dirs path)]
-    (if (= 1 (count nodes))
+    (if (only-one? nodes)
       (if-not (dir-exists? dirs path)
         {:id (mk-folder drive (:title (first nodes)) root-folder)}
         (first nodes))
@@ -172,8 +161,8 @@
         (sort-by :index nodes)))))
 
 
-(defn ls-dir [drive-service filter]
-  (ls-dirs drive-service))
+(defn ls-dir [drive filter]
+  (ls-dirs drive))
 
 (defn cp-file [drive src-file dest-file])
 
@@ -195,7 +184,6 @@
 (defn mk-gdrive [app-name]
   (->GDrive
     (mk-drive-service (load-config) app-name)))
-
 
 ;;
 ;; I considerd using a let-over-lambda style
@@ -222,5 +210,4 @@
 ;(defn upload-file [{:keys [local-file remote-dir-id remote-name]}]
 ;  )
 
-(defn download-file []
-  )
+
