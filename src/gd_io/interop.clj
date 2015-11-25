@@ -103,7 +103,8 @@
     (.getId)))
 
 (defn download-file
-  "Download a file given the files GDrive id"
+  "Download a file given the files GDrive id. The file will be written to the
+  provided output stream"
   [drive file-id ostream]
   (->
     drive
@@ -141,7 +142,7 @@
     (bean)))
 
 (defn about-summary
-  "Google Drive's about endpoint returns a copious amount of info.
+  "Google Drive's about endpoint returns copious details.
   This merely returns a very small, but useful subset"
   [drive]
   (let [{:keys [rootFolderId
