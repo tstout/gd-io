@@ -1,4 +1,4 @@
-(ns gd-io.interop
+(ns gd-io.internal
   "Convenience wrappers for Google Drive's Java API"
   (:import
     (com.google.api.client.googleapis.auth.oauth2 GoogleClientSecrets$Details

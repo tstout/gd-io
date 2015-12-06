@@ -1,7 +1,7 @@
 (ns gd-io.file
   "Google Drive I/O library"
   (:require [gd-io.config :refer [load-default-config]]
-            [gd-io.interop :refer [mk-drive-service
+            [gd-io.internal :refer [mk-drive-service
                                    root-folder
                                    get-folders
                                    insert-folder]]

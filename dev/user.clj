@@ -3,7 +3,7 @@
     [clojure.inspector :refer [inspect inspect-tree inspect-table]]
     [clojure.java.shell :refer [sh]]
     [clojure.data :refer [diff]]
-    [gd-io.interop :refer [mk-drive-service
+    [gd-io.internal :refer [mk-drive-service
                            mk-file-meta
                            insert-file
                            trash-file
