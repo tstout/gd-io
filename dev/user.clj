@@ -2,6 +2,7 @@
   (:require
     [clojure.inspector :refer [inspect inspect-tree inspect-table]]
     [clojure.java.shell :refer [sh]]
+    [clojure.data :refer [diff]]
     [gd-io.interop :refer [mk-drive-service
                            mk-file-meta
                            insert-file
@@ -13,9 +14,9 @@
                            root-folder
                            insert-folder
                            download-file]]
-    [gd-io.config :refer [load-config default-cfg-file]]
+    [gd-io.config :refer [load-default-config]]
     [clojure.string :as str]
-    [gd-io.core :refer [ls-dirs
+    [gd-io.file :refer [ls-dirs
                         dir-tree
                         unique-parents
                         file-by-id
@@ -37,7 +38,11 @@
 
 (println "--- loading custom repl stuff ---")
 
-(def driveservice (mk-drive-service (load-config) "fin-kratzen"))
+(def driveservice
+  (mk-drive-service
+    (load-default-config)
+    "fin-kratzen"))
+
 (def dirs (ls-dirs driveservice))
 (def dtree (dir-tree dirs))
 (def ntree (normalize-dir-tree dtree dirs))

@@ -2,13 +2,15 @@
   (:require [clojure.java.io :refer [as-file file make-parents]]
             [clojure.edn :as edn]))
 
-(defn cfg-file
-  ([dirname fname]
-   (->
-     (System/getProperty "user.home")
-     (file dirname fname))))
+(def cfg-defaults
+  {:root-dir (System/getProperty "user.home")
+   :dir      ".gd-io"
+   :fname    "gd-io-creds.clj"})
 
-(def default-cfg-file (cfg-file ".gd-io" "gd-io-creds.clj"))
+(defn cfg-file [opts]
+  (let [{:keys [root-dir dir fname]}
+        (merge cfg-defaults opts)]
+    (file root-dir dir fname)))
 
 (def stub-config
   {:client-id     "YOUR CLIENT ID"
@@ -16,22 +18,23 @@
    :redirect-uris ["urn:ietf:wg:oauth:2.0:oob" "http://localhost"]
    :auth-map      {:access-token  "YOUR ACCESS TOKEN"
                    :expires-in    3600
-                   :refresh-token "YOUR REFRESH TOKEN",
+                   :refresh-token "YOUR REFRESH TOKEN"
                    :token-type    "Bearer"}})
 
-;; TODO - change this to throw an exception indicating
-;; where and what stub file was created...
-(defn mk-config []
-  (when-not (.exists default-cfg-file)
-    (do
-      (make-parents default-cfg-file)
-      (spit default-cfg-file stub-config))))
+(defn mk-config [opts]
+  (let [file (cfg-file opts)]
+    (when-not (.exists file)
+      (make-parents file)
+      (spit file stub-config))))
 
-(defn load-config []
-  (mk-config)
+(defn load-config [opts]
+  (mk-config opts)
   (->
-    default-cfg-file
+    (cfg-file opts)
     slurp
     edn/read-string))
+
+(defn load-default-config []
+  (load-config {}))
 
 

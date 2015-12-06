@@ -1,6 +1,6 @@
-(ns gd-io.core
+(ns gd-io.file
   "Google Drive I/O library"
-  (:require [gd-io.config :refer [load-config]]
+  (:require [gd-io.config :refer [load-default-config]]
             [gd-io.interop :refer [mk-drive-service
                                    root-folder
                                    get-folders
@@ -9,8 +9,6 @@
             [clojure.string :as str]))
 
 (defrecord FileId [parent-id name id])
-
-;; TODO - move to interop
 
 (defn file-by-id [id files]
   (first
@@ -129,8 +127,8 @@
 (defn mk-dir
   "Create the specified directory along with any parent directories
   if they do not currently exist. If the directory already exists, this
-  is not considered an error. The GDrive id of the path is returned.
-  The path argument is a typical unix-style path. For example,
+  is not considered an error. A map containing GDrive information for the
+  path is returned. The path argument is a typical unix-style path. For example,
   /family-pictures/2015"
   [drive path]
   (let [root-folder (root-folder drive)
@@ -161,29 +159,29 @@
         (sort-by :index nodes)))))
 
 
-(defn ls-dir [drive filter]
+(defn ls-dir [drive]
   (ls-dirs drive))
 
 (defn cp-file [drive src-file dest-file])
 
-(defrecord GDrive [drive-service]
+(defrecord GDrive [drive]
   IDrive
-  (mkdir [drive dir-name]
+  (mkdir [this dir-name]
     ;;(mk-dir drive-service dir-name))
     )
 
-  (ls [drive filter]
-    (ls-dir drive-service filter))
+  (ls [this]
+    (ls-dir drive))
 
-  (cp [drive src-file dest-file]
-    (cp-file drive-service src-file dest-file))
+  (cp [this src-file dest-file]
+    (cp-file drive src-file dest-file))
 
-  (rm [drive file]
+  (rm [this file]
     (prn "rm---")))
 
 (defn mk-gdrive [app-name]
   (->GDrive
-    (mk-drive-service (load-config) app-name)))
+    (mk-drive-service (load-default-config) app-name)))
 
 ;;
 ;; I considerd using a let-over-lambda style

@@ -1,5 +1,5 @@
 (ns gd-io.interop
-  "Convenience wrappers for Google Drive java api"
+  "Convenience wrappers for Google Drive's Java API"
   (:import
     (com.google.api.client.googleapis.auth.oauth2 GoogleClientSecrets$Details
                                                   GoogleCredential
@@ -148,6 +148,7 @@
   (let [{:keys [rootFolderId
                 quotaBytesUsed
                 quotaBytesTotal]} (about drive)]
+    ;; TODO - get rid of quota here in keywords
     {:root-folder           rootFolderId
      :quota-bytes-used      quotaBytesUsed
      :quota-bytes-total     quotaBytesTotal

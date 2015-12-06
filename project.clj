@@ -13,6 +13,9 @@
                  [com.google.apis/google-api-services-drive "v2-rev168-1.20.0"]
                  [com.google.gdata/core "1.47.1"]
                  [org.clojure/data.json "0.2.6"]]
+  :plugins [[lein-autoexpect "1.7.0"]
+            [lein-expectations "0.0.7"]]
   :profiles {:dev {:source-paths ["dev"]
-                   :dependencies [[org.clojure/tools.namespace "0.2.4"]]}}
+                   :dependencies [[org.clojure/tools.namespace "0.2.11"]
+                                  [expectations "2.0.9"]]}}
   :repl-options {:init-ns user})
