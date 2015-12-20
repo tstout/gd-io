@@ -1,6 +1,8 @@
 # gd-io
 
 A Clojure library providing primitive access to Google Drive.
+The API is minimal, intended primarily for using Google Drive
+as a medium for storing backup data.
 
 ## Usage
 Look at https://github.com/SparkFund/google-apps-clj/blob/master/README.md for instructions on how to obtain credentials

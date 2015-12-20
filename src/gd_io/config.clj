@@ -1,5 +1,5 @@
 (ns gd-io.config
-  (:require [clojure.java.io :refer [as-file file make-parents]]
+  (:require [clojure.java.io :refer [resource as-file file make-parents]]
             [clojure.edn :as edn]))
 
 (def cfg-defaults
@@ -37,4 +37,11 @@
 (defn load-default-config []
   (load-config {}))
 
+(defn
+  load-res [res]
+  (-> res
+      resource
+      slurp))
 
+(defn res-as-file [name]
+  (file (resource name)))

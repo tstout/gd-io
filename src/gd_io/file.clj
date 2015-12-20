@@ -2,11 +2,17 @@
   "Google Drive I/O library"
   (:require [gd-io.config :refer [load-default-config]]
             [gd-io.internal :refer [mk-drive-service
-                                   root-folder
-                                   get-folders
-                                   insert-folder]]
+                                    root-folder
+                                    get-folders
+                                    insert-folder
+                                    insert-file
+                                    mk-file-meta
+                                    download-file
+                                    trash-file]]
             [gd-io.protocols :refer [IDrive]]
-            [clojure.string :as str]))
+            [clojure.java.io :refer [output-stream]]
+            [clojure.string :as str])
+  (:import (java.io File)))
 
 (defrecord FileId [parent-id name id])
 
@@ -159,53 +165,33 @@
         (sort-by :index nodes)))))
 
 
-(defn ls-dir [drive]
-  (ls-dirs drive))
-
-(defn cp-file [drive src-file dest-file])
-
 (defrecord GDrive [drive]
   IDrive
   (mkdir [this dir-name]
-    ;;(mk-dir drive-service dir-name))
-    )
+    (mk-dir drive dir-name))
 
   (ls [this]
-    (ls-dir drive))
+    (ls-dirs drive))
 
-  (cp [this src-file dest-file]
-    (cp-file drive src-file dest-file))
+  (upload [this opts]
+    (let [{:keys [title parent-folder file]} opts]
+      (assert (instance? File file) "file must be a java.io.File")
+      (insert-file {:drive     drive
+                    :file-meta (mk-file-meta
+                                 {:title         title
+                                  :description   "auto-gen"
+                                  :media-type    "application/octet-stream"
+                                  :parent-folder (:id (mk-dir drive parent-folder))})
+                    :file      file})))
 
-  (rm [this file]
-    (prn "rm---")))
+  (download [this file-id dest-file]
+    (with-open [ostream (output-stream dest-file)]
+      (download-file drive file-id ostream)))
 
-(defn mk-gdrive [app-name]
-  (->GDrive
-    (mk-drive-service (load-default-config) app-name)))
+  (rm [this file-id]
+    (trash-file drive file-id)))
 
-;;
-;; I considerd using a let-over-lambda style
-;; instead of defrecord/defprotocol
-;;;
-;(defn create-gdrive []
-;  (let [drive (mk-drive-service (load-config))
-;        operations {:mkdir (fn [dir-name] (mk-dir drive dir-name))
-;                    :ls    (fn [_] (ls-dirs drive))
-;                    :cp    (fn [src-file dest-file] (cp drive src-file dest-file))
-;                    :rm    (fn [file] (rm drive file))}]
-;    (fn [operation & params]
-;      (->
-;        (operation operations)
-;        (apply params)))))
-
-
-;(defn mk-dir [remote-parent-id]
-;  )
-
-(defn rm-dir [remote-dir-id]
-  )
-
-;(defn upload-file [{:keys [local-file remote-dir-id remote-name]}]
-;  )
-
+  (defn mk-gdrive [app-name]
+    (->GDrive
+      (mk-drive-service (load-default-config) app-name)))
 

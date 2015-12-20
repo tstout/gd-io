@@ -22,10 +22,10 @@
 ;  {:file   "application/vnd.google-apps.file"
 ;   :folder "application/vnd.google-apps.folder"})
 
-(def ^:private http-transport
+(def http-transport
   (GoogleNetHttpTransport/newTrustedTransport))
 
-(def ^:private json-factory
+(def json-factory
   (JacksonFactory/getDefaultInstance))
 
 (defn has-keys? [m key-seq]
@@ -155,7 +155,7 @@
      :quota-bytes-remaining (- quotaBytesTotal quotaBytesUsed)}))
 
 (defn root-folder
-  "Convenience fn for extracting the root folder from a drive service instance"
+  "Convenience for extracting the root folder from a drive service instance"
   [drive-service]
   (:root-folder (about-summary drive-service)))
 
