@@ -11,10 +11,7 @@
                                     trash-file]]
             [gd-io.protocols :refer [IDrive]]
             [clojure.java.io :refer [output-stream]]
-            [clojure.string :as str])
-  (:import (java.io File)))
-
-(defrecord FileId [parent-id name id])
+            [clojure.string :as str]))
 
 (defn file-by-id [id files]
   (first
@@ -28,9 +25,6 @@
     (vector title id)
     (vector "/" id)))
 
-;(defn root-dir-id [dirs]
-;  (filter #(= nil (file-title) dirs)
-
 (defn dir-titles [id-vec files]
   (map #(dir-title % files) id-vec))
 
@@ -40,28 +34,11 @@
 (defn file-titles [files]
   (map #(file-title (:id %) files) files))
 
-;; TODO move to interop
-(defn get-file-by-id [drive id]
-  (->
-    drive
-    (.files)
-    (.get id)
-    (.execute)))
+;(defn path-vec [path]
+;  (vec (str/split path #"/")))
 
-;; TODO move to interop
-
-
-(defn unique-parents [dirs]
-  ;; TODO - find file names of these IDs.
-  ;; simply need to find the parent id name. Might have to map
-  ;; roots to "/" explicitly.
-  (set (map #(:parents %) dirs)))
-
-(defn path-vec [path]
-  (vec (str/split path #"/")))
-
-(defn dir-tree [dirs]
-  (group-by :parents dirs))
+;(defn dir-tree [dirs]
+;  (group-by :parents dirs))
 
 (defn in?
   "true if the sequence contains the element"
@@ -92,19 +69,6 @@
     {:title title
      :id    nil
      :index index}))
-
-(defn path-parent-id
-  "Extract the id of the parent path corresponding to the
-  path-node"
-  [path-node path-vec]
-  {:pre [(map? path-node)
-         (> (:index path-node) 0)]}
-  (let [parent-index (dec (:index path-node))]
-    (:id
-      (first
-        (filter
-          #(= parent-index (:index %))
-          path-vec)))))
 
 (defn mk-path [dirs path]
   (let [parts (filter #(not-blank? %) (str/split path #"/"))]
@@ -164,7 +128,6 @@
             :else current))
         (sort-by :index nodes)))))
 
-
 (defrecord GDrive [drive]
   IDrive
   (mkdir [this dir-name]
@@ -175,7 +138,6 @@
 
   (upload [this opts]
     (let [{:keys [title parent-folder file]} opts]
-      (assert (instance? File file) "file must be a java.io.File")
       (insert-file {:drive     drive
                     :file-meta (mk-file-meta
                                  {:title         title
@@ -191,7 +153,7 @@
   (rm [this file-id]
     (trash-file drive file-id)))
 
-  (defn mk-gdrive [app-name]
-    (->GDrive
-      (mk-drive-service (load-default-config) app-name)))
+(defn mk-gdrive [app-name]
+  (->GDrive
+    (mk-drive-service (load-default-config) app-name)))
 
