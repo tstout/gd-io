@@ -5,9 +5,9 @@
             [gd-io.protocols :refer [ls rm upload download mkdir]]
             [expectations :refer [expect expect-let]]))
 
-(def gdrive (mk-gdrive "gd-io test"))
+(def gdrive (mk-gdrive))
 (def tfile (file (resource "test-data.txt")))
-(def state (atom {:file-id nil}))
+(def state (atom nil))
 
 ;;
 ;; Upload a file, download it, and then delete it.
@@ -18,12 +18,12 @@
   (let [id (upload gdrive {:title         "gd-io-test.txt"
                            :parent-folder "/gd-io/test"
                            :file          tfile})]
-    (swap! state assoc :file-id id)))
+    (reset! state id)))
 
 (defn after
   {:expectations-options :after-run}
   []
-  (rm gdrive (:file-id @state)))
+  (rm gdrive @state))
 
 (expect not-empty (ls gdrive))
 

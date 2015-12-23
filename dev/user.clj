@@ -17,8 +17,7 @@
                             download-file]]
     [gd-io.config :refer [load-default-config]]
     [clojure.string :as str]
-    [gd-io.file :refer [ls-dirs
-                        file-by-id
+    [gd-io.file :refer [file-by-id
                         file-title
                         normalize-dir-tree
                         dir-titles
@@ -39,12 +38,8 @@
 
 (println "--- loading user.clj ---")
 
-(def driveservice (mk-gdrive "fin-kratzen"))
-
+(def driveservice (mk-gdrive))
 (def home-dir (System/getProperty "user.home"))
-
-(def drive (mk-gdrive "fin-kratzen"))
-
 (def test-file (file (resource "test-data.txt")))
 
 

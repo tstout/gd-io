@@ -34,12 +34,6 @@
 (defn file-titles [files]
   (map #(file-title (:id %) files) files))
 
-;(defn path-vec [path]
-;  (vec (str/split path #"/")))
-
-;(defn dir-tree [dirs]
-;  (group-by :parents dirs))
-
 (defn in?
   "true if the sequence contains the element"
   [seq elm]
@@ -153,7 +147,8 @@
   (rm [this file-id]
     (trash-file drive file-id)))
 
-(defn mk-gdrive [app-name]
-  (->GDrive
-    (mk-drive-service (load-default-config) app-name)))
+(defn mk-gdrive [& opts]
+  (let [{:keys [app-name] :or {app-name "gd-io"}} opts]
+    (->GDrive
+      (mk-drive-service (load-default-config) app-name))))
 

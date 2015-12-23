@@ -18,10 +18,6 @@
   {:folders "mimeType = 'application/vnd.google-apps.folder' and trashed=false"
    :parents "'%s'in parents"})
 
-;(def ^:private mime-type
-;  {:file   "application/vnd.google-apps.file"
-;   :folder "application/vnd.google-apps.folder"})
-
 (def http-transport
   (GoogleNetHttpTransport/newTrustedTransport))
 
