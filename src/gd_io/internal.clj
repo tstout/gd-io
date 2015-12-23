@@ -144,11 +144,10 @@
   (let [{:keys [rootFolderId
                 quotaBytesUsed
                 quotaBytesTotal]} (about drive)]
-    ;; TODO - get rid of quota here in keywords
     {:root-folder           rootFolderId
-     :quota-bytes-used      quotaBytesUsed
-     :quota-bytes-total     quotaBytesTotal
-     :quota-bytes-remaining (- quotaBytesTotal quotaBytesUsed)}))
+     :bytes-used      quotaBytesUsed
+     :bytes-total     quotaBytesTotal
+     :bytes-remaining (- quotaBytesTotal quotaBytesUsed)}))
 
 (defn root-folder
   "Convenience for extracting the root folder from a drive service instance"

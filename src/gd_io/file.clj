@@ -10,7 +10,7 @@
                                     download-file
                                     trash-file]]
             [gd-io.protocols :refer [IDrive]]
-            [clojure.java.io :refer [output-stream]]
+            [clojure.java.io :refer [output-stream file]]
             [clojure.string :as str]))
 
 (defn file-by-id [id files]
@@ -142,7 +142,8 @@
 
   (download [this file-id dest-file]
     (with-open [ostream (output-stream dest-file)]
-      (download-file drive file-id ostream)))
+      (download-file drive file-id ostream))
+    (file dest-file))
 
   (rm [this file-id]
     (trash-file drive file-id)))

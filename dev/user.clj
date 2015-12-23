@@ -39,7 +39,6 @@
 (println "--- loading user.clj ---")
 
 (def driveservice (mk-gdrive))
-(def home-dir (System/getProperty "user.home"))
 (def test-file (file (resource "test-data.txt")))
 
 

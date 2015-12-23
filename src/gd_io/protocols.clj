@@ -13,7 +13,7 @@
       :parent-folder  - unix-style path /a/b/c
       :file           - source file path}")
 
-  (download [drive file-id dest-file]
-    "Write the file specified by file-id to dest-file")
+  (download [drive file-id dest-path]
+    "Write the file specified by file-id to dest-path")
 
   (rm [drive file-id] "delete a file"))
