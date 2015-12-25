@@ -1,6 +1,6 @@
 (defproject gd-io "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :description "File I/O for google drive"
+  :url "https://github.com/tstout/gd-io"
   :license {:name "Eclipse Public License"
             :url  "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
