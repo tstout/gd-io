@@ -15,7 +15,7 @@
                             root-folder
                             insert-folder
                             download-file]]
-    [gd-io.config :refer [load-default-config]]
+    [gd-io.config :refer [load-default-config mk-config]]
     [clojure.string :as str]
     [gd-io.file :refer [file-by-id
                         file-title

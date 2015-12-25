@@ -1,5 +1,11 @@
 (ns gd-io.config
-  (:require [clojure.java.io :refer [resource as-file file make-parents]]
+  (:require [clojure.java.io :refer [resource
+                                     as-file
+                                     file
+                                     make-parents
+                                     output-stream
+                                     writer]]
+            [clojure.pprint :refer [pprint pp]]
             [clojure.edn :as edn]))
 
 (def cfg-defaults
@@ -25,7 +31,8 @@
   (let [file (cfg-file opts)]
     (when-not (.exists file)
       (make-parents file)
-      (spit file stub-config))))
+      (with-open [out (writer (output-stream file))]
+        (pprint stub-config out)))))
 
 (defn load-config [opts]
   (mk-config opts)
