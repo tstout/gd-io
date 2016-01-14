@@ -1,4 +1,4 @@
-(defproject com.github.tstout/gd-io "0.1.0-SNAPSHOT"
+(defproject com.github.tstout/gd-io "0.1.0"
   :description "File I/O for google drive"
   :url "https://github.com/tstout/gd-io"
   :license {:name "Eclipse Public License"
