@@ -87,6 +87,9 @@
 
 ;;
 ;; Note: It seems a more elegant implementation could be achieved here.
+;; The gist is that each node in the path is data that should
+;; ultimately be reduced to a single gdrive file id. I think the design
+;; is sound, but my implementation might be juvenile.
 ;;
 (defn mk-dir
   "Create the specified directory along with any parent directories

@@ -18,4 +18,6 @@
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies [[org.clojure/tools.namespace "0.2.11"]
                                   [expectations "2.0.9"]]}}
-  :repl-options {:init-ns user})
+  :repl-options {:init-ns user}
+  :scm {:name "git"
+        :url "https://github.com/tstout/gd-io"})

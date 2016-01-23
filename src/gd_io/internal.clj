@@ -14,6 +14,10 @@
   (:require [gd-io.config :refer [load-config]]
             [clojure.set :as set]))
 
+
+;;
+;; TODO - the impl of has-keys? precondition should be re-evaluated. The repeating of keys is ugly.
+;;
 (def ^:private queries
   {:folders "mimeType = 'application/vnd.google-apps.folder' and trashed=false"
    :parents "'%s'in parents"})

@@ -20,6 +20,9 @@ You will need to create an EDN file containing the following:
                  :refresh-token "YOUR REFRESH TOKEN"
                  :token-type    "Bearer"}}
 ``` 
+
+By default, this file is expected to be located at ~/.gd-io/gd-io-creds.clj.
+
 ## License
 
 Copyright © 2015 Todd Stout
