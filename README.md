@@ -5,6 +5,9 @@ The API is minimal, intended primarily for using Google Drive
 as a medium for storing backup data.
 
 ## Usage
+
+[![Clojars Project](https://img.shields.io/clojars/v/com.github.tstout/gd-io.svg)]
+
 You will need to create OAUTH credentials. 
 Look at https://github.com/SparkFund/google-apps-clj/blob/master/README.md for instructions on how to obtain credentials
 for your google drive account using the REPL.
@@ -22,6 +25,24 @@ You will need to create an EDN file containing the following:
 ``` 
 
 By default, this file is expected to be located at ~/.gd-io/gd-io-creds.clj.
+
+Uploading a file:
+```clojure
+(ns sample
+  (:require [clojure.java.io :refer [file]]
+            [gd-io.file :refer [mk-gdrive]]
+            [gd-io.protocols :refer [upload]]))
+
+(->
+ (mk-gdrive)
+ (upload {:title         "backup-1.zip"
+          :parent-folder "/backup/my-app"
+          :file          (file "path/to/local/file")}))
+
+```
+upload returns the id of the new file. This id is needed to later delete the file.
+If the parent-folder does not exist, it will be created.
+
 
 ## License
 

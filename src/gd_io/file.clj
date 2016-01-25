@@ -1,6 +1,6 @@
 (ns gd-io.file
   "Google Drive I/O library"
-  (:require [gd-io.config :refer [load-default-config]]
+  (:require [gd-io.config :refer [load-config]]
             [gd-io.internal :refer [mk-drive-service
                                     root-folder
                                     get-folders
@@ -151,8 +151,28 @@
   (rm [this file-id]
     (trash-file drive file-id)))
 
-(defn mk-gdrive [& opts]
-  (let [{:keys [app-name] :or {app-name "gd-io"}} opts]
+
+(defn mk-gdrive
+  "Create a GDrive instance based on credentials
+  loaded from a file. An optional map can be provided to
+  override the default location of the file.
+  If no options are given, then the following
+  defaults are applied to define the location of the
+  configuration file:
+
+  { :root-dir (System/getProperty \"user.home\")
+    :dir      \".gd-io\"
+    :fname    \"gd-io-creds.clj\" }
+
+  This corresponds to a path of ~/.gd-io/gd-io-creds.clj
+  Any key not specified in the option map will have the default values.
+  "
+  [& opts]
+  {:pre [(or
+           (nil? opts)
+           (map? (first opts)))]}
+  (let [file-opts (first opts)
+        {:keys [app-name] :or {app-name "gd-io"}} file-opts]
     (->GDrive
-      (mk-drive-service (load-default-config) app-name))))
+      (mk-drive-service (load-config file-opts) app-name))))
 
