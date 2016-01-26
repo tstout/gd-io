@@ -25,8 +25,11 @@ You will need to create an EDN file containing the following:
 ``` 
 
 By default, this file is expected to be located at ~/.gd-io/gd-io-creds.clj.
-This location can be customized by specifying a map of options to **mk-gdrive**. See 
-*(doc mk-gdrive)*
+This location can be customized by specifying a map of options to **mk-gdrive**.
+See *(doc mk-gdrive)*
+
+If the EDN config file does not exist when mk-gdrive is executed, a convenient template
+is created.
 
 Uploading a file:
 ```clojure
