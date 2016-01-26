@@ -25,6 +25,8 @@ You will need to create an EDN file containing the following:
 ``` 
 
 By default, this file is expected to be located at ~/.gd-io/gd-io-creds.clj.
+This location can be customized by specifying a map of options to **mk-gdrive**. See 
+*(doc mk-gdrive)*
 
 Uploading a file:
 ```clojure
@@ -40,8 +42,30 @@ Uploading a file:
           :file          (file "path/to/local/file")}))
 
 ```
-upload returns the id of the new file. This id is needed to later delete the file.
-If the parent-folder does not exist, it will be created.
+**upload** returns the Drive id of the new file. This id is needed to later delete or download the file.
+If any directories in the path specified by **:parent-folder** do not exist, they will be created.
+Uploaded files have a drive type of *application/octet-stream*.
+
+Downloading a file:
+```clojure
+(ns sample
+  (:require [gd-io.file :refer [mk-gdrive]]
+            [gd-io.protocols :refer [download]]))
+
+(->
+ (mk-gdrive)
+ (download file-id-from-previous-upload "path/to/local/destintation/file")
+```
+
+Deleting a file:
+```
+(ns sample
+  (:require [gd-io.file :refer [mk-gdrive]]
+            [gd-io.protocols :refer [rm]]))
+(->
+  (mk-gdrive)
+  (rm file-id-from-previous-upload))
+``` 
 
 
 ## License
