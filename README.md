@@ -54,7 +54,7 @@ Downloading a file:
 
 (->
  (mk-gdrive)
- (download file-id-from-previous-upload "path/to/local/destintation/file")
+ (download file-id-from-previous-upload "path/to/local/destintation/file"))
 ```
 
 Deleting a file:
