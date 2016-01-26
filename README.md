@@ -58,7 +58,7 @@ Downloading a file:
 ```
 
 Deleting a file:
-```
+```clojure
 (ns sample
   (:require [gd-io.file :refer [mk-gdrive]]
             [gd-io.protocols :refer [rm]]))
